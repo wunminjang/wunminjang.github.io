@@ -1,0 +1,450 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Wunmin Jang</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Wunmin Jang — researcher in learning sciences, human–AI interaction and eye tracking in computing education, Technical University of Munich.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Public+Sans:ital,wght@0,400;0,600;1,400&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky identity rail on the left, one reading column on the right; a gaze scanpath is the single visual motif. */
+:root {
+  --paper: #f6f8fa;
+  --surface: #ffffff;
+  --ink: #14202e;
+  --muted: #566577;
+  --line: #dbe2ea;
+  --accent: #0f6e78;       /* tracker teal */
+  --fix: #d97a1e;          /* fixation amber */
+  --fix-soft: rgba(217, 122, 30, .16);
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body: "Public Sans", "Helvetica Neue", Arial, sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f161e; --surface: #16202b; --ink: #e6edf3; --muted: #9aaabb;
+    --line: #26333f; --accent: #5cc3cc; --fix: #f0a04b; --fix-soft: rgba(240, 160, 75, .18);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f161e; --surface: #16202b; --ink: #e6edf3; --muted: #9aaabb;
+  --line: #26333f; --accent: #5cc3cc; --fix: #f0a04b; --fix-soft: rgba(240, 160, 75, .18);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--body);
+  font-size: 16.5px;
+  line-height: 1.6;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+}
+a { color: var(--accent); text-underline-offset: 3px; text-decoration-thickness: 1px; }
+a:hover { text-decoration-thickness: 2px; }
+a:focus-visible, button:focus-visible { outline: 2px solid var(--fix); outline-offset: 2px; border-radius: 3px; }
+h1, h2, h3 { font-family: var(--display); text-wrap: balance; line-height: 1.15; margin: 0; }
+
+.shell {
+  max-width: 1120px; margin: 0 auto;
+  display: grid; grid-template-columns: 290px minmax(0, 1fr); gap: 64px;
+  padding-block: 56px 80px;
+}
+
+/* ---------- Identity rail ---------- */
+.rail { align-self: start; display: grid; gap: 22px; }
+@media (min-width: 901px) and (min-height: 1000px) { .rail { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 40px); } }
+.portrait { display: block; width: 100%; max-width: 200px; height: auto; aspect-ratio: 3 / 4; object-fit: cover; border-radius: 12px; border: 1px solid var(--line); }
+.monogram {
+  width: 96px; height: 96px; border-radius: 50%;
+  display: grid; place-items: center;
+  background: var(--surface); border: 1px solid var(--line);
+  font-family: var(--display); font-weight: 700; font-size: 34px; color: var(--accent);
+  position: relative;
+}
+.monogram::after { /* a fixation ring around the portrait */
+  content: ""; position: absolute; inset: -7px; border-radius: 50%;
+  border: 1.5px dashed var(--fix); opacity: .7;
+}
+.rail h1 { font-size: 38px; font-weight: 700; letter-spacing: -.01em; }
+.role { color: var(--muted); font-size: 15px; margin: 6px 0 0; }
+.role strong { color: var(--ink); font-weight: 600; }
+.status {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-family: var(--mono); font-size: 12px; letter-spacing: .02em;
+  color: var(--ink); background: var(--fix-soft); padding: 5px 10px; border-radius: 999px; width: fit-content;
+}
+.status::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--fix); }
+.rail nav ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; border-left: 1px solid var(--line); }
+.rail nav a {
+  display: block; padding: 4px 0 4px 14px; margin-left: -1px; border-left: 2px solid transparent;
+  color: var(--muted); text-decoration: none; font-size: 15px;
+}
+.rail nav a:hover, .rail nav a.on { color: var(--ink); border-left-color: var(--accent); }
+.contact { display: grid; gap: 8px; font-size: 14.5px; }
+.email-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.email { font-family: var(--mono); font-size: 13.5px; user-select: all; }
+.copy {
+  font: 500 12px var(--mono); color: var(--accent); background: transparent;
+  border: 1px solid var(--line); border-radius: 6px; padding: 3px 8px; cursor: pointer;
+}
+.copy:hover { border-color: var(--accent); }
+.meta { color: var(--muted); font-size: 14px; }
+.profiles { list-style: none; margin: 4px 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 16px; font-family: var(--mono); font-size: 13px; }
+
+/* ---------- Main column ---------- */
+main { display: grid; gap: 72px; min-width: 0; }
+section { scroll-margin-top: 32px; min-width: 0; }
+.label {
+  font-family: var(--mono); font-size: 12px; text-transform: uppercase; letter-spacing: .12em;
+  color: var(--accent); margin: 0 0 14px;
+}
+h2 { font-size: 28px; font-weight: 700; margin-bottom: 22px; }
+p { margin: 0 0 1em; max-width: 66ch; }
+.lede { font-size: 20px; line-height: 1.5; max-width: 34ch; font-family: var(--display); font-weight: 500; margin-bottom: 20px; }
+
+/* hero with scanpath */
+.intro { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 40px; align-items: start; }
+.scan { width: 100%; max-width: 230px; height: auto; display: block; }
+.scan .sacc { fill: none; stroke: var(--muted); stroke-width: 1.2; opacity: .55; }
+.scan .fx { fill: var(--fix-soft); stroke: var(--fix); stroke-width: 1.4; }
+.scan .n { font: 500 9px var(--mono); fill: var(--fix); }
+.scan .aoi { fill: none; stroke: var(--accent); stroke-width: 1; stroke-dasharray: 3 3; }
+.scan .aoi-t { font: 500 8.5px var(--mono); fill: var(--accent); letter-spacing: .06em; }
+.scan-cap { font-family: var(--mono); font-size: 11px; color: var(--muted); margin-top: 6px; }
+@media (prefers-reduced-motion: no-preference) {
+  .scan .sacc { stroke-dasharray: 620; animation: trace 2.6s ease-out .2s both; }
+  .scan .fx { animation: pop .5s ease-out both; }
+  @keyframes trace { from { stroke-dashoffset: 620; } to { stroke-dashoffset: 0; } }
+  @keyframes pop { from { transform: scale(.4); } to { transform: scale(1); } }
+  .scan .fx { transform-box: fill-box; transform-origin: center; }
+}
+
+.interests { display: flex; flex-wrap: wrap; gap: 8px; margin: 18px 0 0; padding: 0; list-style: none; }
+.interests li { font-size: 14px; padding: 4px 11px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); }
+
+/* research projects */
+.projects { display: grid; gap: 0; }
+.project { display: grid; grid-template-columns: 110px minmax(0, 1fr); gap: 24px; padding: 26px 0; border-top: 1px solid var(--line); }
+.project:last-child { border-bottom: 1px solid var(--line); }
+.project .when { font-family: var(--mono); font-size: 13px; color: var(--muted); padding-top: 4px; }
+.project h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.project p { margin-bottom: .6em; }
+.facts { display: flex; flex-wrap: wrap; gap: 6px 18px; margin: 10px 0 0; padding: 0; list-style: none; font-family: var(--mono); font-size: 12.5px; color: var(--muted); }
+.facts b { color: var(--ink); font-weight: 500; }
+
+/* publications */
+.filters { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+.filters button {
+  font: 500 13px var(--body); color: var(--muted); background: var(--surface);
+  border: 1px solid var(--line); border-radius: 999px; padding: 6px 14px; cursor: pointer;
+}
+.filters button[aria-pressed="true"] { color: var(--surface); background: var(--ink); border-color: var(--ink); }
+.filters .count { font-family: var(--mono); font-size: 11.5px; opacity: .75; margin-left: 4px; }
+.pubs { list-style: none; margin: 0; padding: 0; display: grid; gap: 22px; }
+.pub { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 16px; }
+.pub .yr { font-family: var(--mono); font-size: 13px; color: var(--muted); padding-top: 2px; }
+.pub .t { font-weight: 600; display: block; margin-bottom: 2px; }
+.pub .au { font-size: 14.5px; color: var(--muted); }
+.pub .au .me { color: var(--ink); font-weight: 600; }
+.pub .venue { font-size: 14.5px; font-style: italic; }
+.pub .links { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 4px; font-family: var(--mono); font-size: 12.5px; }
+.badge {
+  display: inline-block; font-family: var(--mono); font-size: 11px; font-style: normal; letter-spacing: .03em;
+  padding: 1px 8px; border-radius: 4px; margin-left: 6px; vertical-align: 2px;
+}
+.badge.award { background: var(--fix-soft); color: var(--ink); border: 1px solid var(--fix); }
+.badge.review { border: 1px dashed var(--muted); color: var(--muted); }
+.badge.ko { border: 1px solid var(--line); color: var(--muted); }
+.note { font-size: 14px; color: var(--muted); margin-top: 20px; }
+
+/* two-column lists */
+.duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 48px; }
+.list { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.list .k { font-family: var(--mono); font-size: 12.5px; color: var(--muted); display: block; }
+.list .v { font-weight: 600; display: block; }
+.list .d { font-size: 14.5px; color: var(--muted); }
+
+.methods { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px 40px; }
+.methods h3 { font-family: var(--body); font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--muted); margin-bottom: 6px; }
+.methods p { font-size: 15px; margin: 0; }
+
+footer { font-size: 13px; color: var(--muted); border-top: 1px solid var(--line); padding-top: 22px; }
+
+/* ---------- Responsive ---------- */
+@media (max-width: 900px) {
+  .shell { grid-template-columns: minmax(0, 1fr); gap: 44px; padding-block: 32px 56px; }
+  .rail { position: static; }
+  .portrait { max-width: 160px; }
+  .rail nav ul { display: flex; flex-wrap: wrap; gap: 4px 14px; border-left: 0; }
+  .rail nav a { padding: 2px 0; border-left: 0; margin: 0; }
+  .rail nav a.on { border-bottom: 2px solid var(--accent); }
+}
+@media (max-width: 640px) {
+  .intro { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .scan { max-width: 200px; }
+  .project { grid-template-columns: minmax(0, 1fr); gap: 4px; }
+  .duo, .methods { grid-template-columns: minmax(0, 1fr); gap: 32px; }
+  .pub { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .lede { font-size: 18px; }
+  .rail h1 { font-size: 32px; }
+}
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <aside class="rail">
+    <img class="portrait" src="profile.jpg" width="600" height="800" alt="Wunmin Jang walking through a stone college quad in Oxford">
+    <div>
+      <h1>Wunmin Jang</h1>
+      <p class="role"><strong>Researcher, learning sciences &amp; human–AI interaction</strong><br>Technical University of Munich</p>
+    </div>
+    <span class="status">PhD dissertation submitted · 2026</span>
+    <nav aria-label="Sections">
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#research">Research</a></li>
+        <li><a href="#publications">Publications</a></li>
+        <li><a href="#methods">Methods</a></li>
+        <li><a href="#background">Education &amp; awards</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+    <div class="contact">
+      <div class="email-row">
+        <span class="email" id="email">wunmin.jang@tum.de</span>
+        <button class="copy" id="copy-email" type="button">Copy</button>
+      </div>
+      <span class="meta">Munich, Germany</span>
+      <ul class="profiles">
+        <li><a href="https://scholar.google.com/citations?user=8F5VoDMAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a></li>
+        <li><a href="https://orcid.org/0009-0005-2288-6732" target="_blank" rel="noopener">ORCID</a></li>
+        <li><a href="Wunmin_Jang_CV.pdf" target="_blank" rel="noopener">CV (PDF)</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <main>
+    <section id="about">
+      <div class="intro">
+        <div>
+          <p class="label">About</p>
+          <p class="lede">I study what people actually learn when AI helps them do the work.</p>
+          <p>I am an interdisciplinary researcher working across the learning sciences, educational psychology, human–AI interaction and computer-supported collaborative learning. My doctoral research at the Technical University of Munich uses controlled experiments, eye tracking and interaction analytics to separate how well people perform <em>with</em> assistance from what they can do independently afterwards.</p>
+          <p>Before Munich, I worked on applied education and workforce-development research in Korea, covering vocational instructor training, higher-education learning outcomes and digital-skills curricula. My PhD in Social Sciences and Technology was submitted in September 2026, with the defence expected in early 2027.</p>
+          <ul class="interests" aria-label="Research interests">
+            <li>AI-assisted learning</li>
+            <li>Appropriate reliance on AI</li>
+            <li>Metacognition &amp; cognitive autonomy</li>
+            <li>Eye tracking &amp; visual attention</li>
+            <li>Multimodal learning analytics</li>
+            <li>Collaborative problem solving</li>
+            <li>Vocational &amp; teacher education</li>
+            <li>Psychometrics</li>
+          </ul>
+        </div>
+        <figure style="margin:0">
+          <svg class="scan" viewBox="0 0 230 210" role="img" aria-label="Illustration of an eye-tracking scanpath moving between a code area and an AI assistant area">
+            <rect class="aoi" x="8" y="14" width="128" height="182" rx="6"/>
+            <text class="aoi-t" x="16" y="30">AOI · CODE</text>
+            <rect class="aoi" x="148" y="14" width="74" height="112" rx="6"/>
+            <text class="aoi-t" x="155" y="30">AOI · AI</text>
+            <path class="sacc" d="M40 60 L92 74 L60 112 L182 64 L190 100 L104 138 L54 168 L118 178"/>
+            <circle class="fx" cx="40" cy="60" r="9" style="animation-delay:.2s"/>
+            <circle class="fx" cx="92" cy="74" r="14" style="animation-delay:.5s"/>
+            <circle class="fx" cx="60" cy="112" r="7" style="animation-delay:.8s"/>
+            <circle class="fx" cx="182" cy="64" r="17" style="animation-delay:1.1s"/>
+            <circle class="fx" cx="190" cy="100" r="10" style="animation-delay:1.4s"/>
+            <circle class="fx" cx="104" cy="138" r="12" style="animation-delay:1.7s"/>
+            <circle class="fx" cx="54" cy="168" r="8" style="animation-delay:2s"/>
+            <circle class="fx" cx="118" cy="178" r="11" style="animation-delay:2.3s"/>
+            <text class="n" x="37" y="63">1</text><text class="n" x="89" y="77">2</text>
+            <text class="n" x="179" y="67">4</text><text class="n" x="101" y="141">6</text>
+            <text class="n" x="115" y="181">8</text>
+          </svg>
+          <figcaption class="scan-cap">Fixations ∝ dwell time · illustrative</figcaption>
+        </figure>
+      </div>
+    </section>
+
+    <section id="research">
+      <p class="label">Research</p>
+      <h2>Current and recent projects</h2>
+      <div class="projects">
+        <article class="project">
+          <div class="when">2023–2026</div>
+          <div>
+            <h3>AI assistance, task performance and learning</h3>
+            <p>A controlled comparison of GitHub Copilot Chat and a curated Python tutorial. Participants solved 44 assisted programming tasks, with unassisted pre- and post-tests that separate performance during tool use from later independent performance. I recorded code submissions, interface interactions, eye movements, workload (NASA-TLX) and user experience (UEQ).</p>
+            <p>Copilot users reached markedly higher correctness on the assisted tasks, but there was no statistically detectable difference in short-term unassisted learning gains between conditions.</p>
+            <ul class="facts"><li><b>61</b> analysed participants</li><li><b>44</b> assisted tasks</li><li>GEE · mixed-effects models</li><li>Under review, IEEE TLT</li></ul>
+          </div>
+        </article>
+        <article class="project">
+          <div class="when">2023–2026</div>
+          <div>
+            <h3>Visual attention and communication in distributed pair programming</h3>
+            <p>Exploratory studies of remote programming pairs (expert–expert, student–student and mixed-expertise) working on easy and difficult debugging tasks. Screen-based eye tracking, verbal interaction data, focus groups and questionnaires show how attention, shared focus and coordination shift with expertise and task difficulty.</p>
+            <ul class="facts"><li><b>19</b> participants</li><li>Tobii Pro Lab · AOI analysis</li><li>ACM ETRA 2024</li><li>IEEE ITET 2026, Best Presentation</li></ul>
+          </div>
+        </article>
+        <article class="project">
+          <div class="when">2024</div>
+          <div>
+            <h3>Human versus LLM annotation of collaborative discourse</h3>
+            <p>Compared human coding with zero-shot LLM multi-label annotation of transactive communication in pair-programming transcripts, using a nine-category scheme. The best LLM configuration reached about 0.59 F1, which points to clear limits for automated coding of educational dialogue.</p>
+            <ul class="facts"><li><b>9</b> discourse categories</li><li>F1 ≈ <b>0.59</b></li><li>IEEE ITHET 2024</li></ul>
+          </div>
+        </article>
+        <article class="project">
+          <div class="when">2026</div>
+          <div>
+            <h3>Machine-learning eye tracking in education: a systematic review</h3>
+            <p>A review of machine-learning approaches to gaze analysis in educational research, focused on whether analytic outputs connect to concrete pedagogical decisions. Written with international co-authors.</p>
+            <ul class="facts"><li>Under review, ACM TOCE</li></ul>
+          </div>
+        </article>
+        <article class="project">
+          <div class="when">2021–2023</div>
+          <div>
+            <h3>Applied education and vocational research, Korea</h3>
+            <p>Team projects at Ewha Womans University and commissioned national studies: a quality-management framework for vocational instructors' in-service training, learning outcomes by university admission pathway, and competency standards and curricula for emerging digital occupations such as web programming and 3D modelling.</p>
+            <ul class="facts"><li>Focus groups · SEM · instrument validation</li><li>10 co-authored journal articles</li></ul>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <section id="publications">
+      <p class="label">Publications</p>
+      <h2>Peer-reviewed work and manuscripts</h2>
+      <div class="filters" role="group" aria-label="Filter publications">
+        <button type="button" id="f-all" data-f="all" aria-pressed="true">All<span class="count"></span></button>
+        <button type="button" id="f-intl" data-f="intl" aria-pressed="false">International conferences<span class="count"></span></button>
+        <button type="button" id="f-ko" data-f="ko" aria-pressed="false">Korean journals<span class="count"></span></button>
+        <button type="button" id="f-review" data-f="review" aria-pressed="false">Under review<span class="count"></span></button>
+      </div>
+      <ol class="pubs" id="pubs"></ol>
+      <p class="note">Korean-language article titles are given in English translation.</p>
+    </section>
+
+    <section id="methods">
+      <p class="label">Methods</p>
+      <h2>How I work</h2>
+      <div class="methods">
+        <div><h3>Study design</h3><p>Controlled human-participant experiments, between-group comparisons, pre/post learning measures, rubric-based scoring, ethics and consent protocols, recruitment and scheduling.</p></div>
+        <div><h3>Multimodal data</h3><p>Tobii eye tracking and Tobii Pro Lab, area-of-interest and gaze-allocation analysis, interaction logs, verbal transcripts, NASA-TLX and UEQ.</p></div>
+        <div><h3>Statistics</h3><p>GEE, mixed-effects models and GLMM, regression, ANOVA, chi-square tests, structural equation modelling, equivalence bounds and instrument validation.</p></div>
+        <div><h3>Tools &amp; qualitative work</h3><p>Python, SPSS, AMOS; focus-group interviews, discourse coding and mixed-method triangulation.</p></div>
+      </div>
+    </section>
+
+    <section id="background">
+      <p class="label">Background</p>
+      <h2>Education and awards</h2>
+      <div class="duo">
+        <ul class="list">
+          <li><span class="k">2023 – present</span><span class="v">PhD candidate, Social Sciences and Technology</span><span class="d">Technical University of Munich. Dissertation submitted September 2026; supervised by Prof. Enkelejda Kasneci.</span></li>
+          <li><span class="k">2021 – 2023</span><span class="v">MA, International Office Administration</span><span class="d">Ewha Womans University, Seoul</span></li>
+          <li><span class="k">2015 – 2020</span><span class="v">BSc, Civil Engineering</span><span class="d">Kumoh National Institute of Technology, Korea</span></li>
+          <li><span class="k">2017 – 2018</span><span class="v">Exchange studies, Business Administration</span><span class="d">Hochschule Heilbronn, Germany</span></li>
+        </ul>
+        <ul class="list">
+          <li><span class="k">2026</span><span class="v">Best Presentation Award</span><span class="d">7th International Conference on Information Technology and Education Technology (ITET)</span></li>
+          <li><span class="k">2024 – 2025</span><span class="v">Laura Bassi Scholarship</span><span class="d">Technical University of Munich</span></li>
+          <li><span class="k">2022</span><span class="v">Honorable Mention</span><span class="d">K-CCA validation study, Korea Tech Employment &amp; Vocational Competency Development Center</span></li>
+          <li><span class="k">Languages</span><span class="v">Korean (native) · English (C1) · German (B1)</span></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="contact">
+      <p class="label">Contact</p>
+      <h2>Get in touch</h2>
+      <p>I am open to postdoctoral and research positions in AI-assisted learning, human–AI interaction and learning analytics, and to collaborations on eye-tracking studies in education. Email is the best way to reach me: <span class="email">wunmin.jang@tum.de</span>. My full <a href="Wunmin_Jang_CV.pdf" target="_blank" rel="noopener">CV (PDF)</a> is available here, and my publications are also listed on <a href="https://scholar.google.com/citations?user=8F5VoDMAAAAJ&amp;hl=en" target="_blank" rel="noopener">Google Scholar</a> and <a href="https://orcid.org/0009-0005-2288-6732" target="_blank" rel="noopener">ORCID</a> (0009-0005-2288-6732).</p>
+    </section>
+
+    <footer>© 2026 Wunmin Jang · Munich</footer>
+  </main>
+</div>
+
+<script>
+(function () {
+  var ME = "Jang, W.";
+  var pubs = [
+    { n: 1, g: "intl", y: 2026, t: "Understanding Visual Attention and Communication in Distributed Pair Programming for Programming Education", a: "Jang, W., Gao, H., Michaeli, T., & Kasneci, E.", v: "7th International Conference on Information Technology and Education Technology (ITET), pp. 101–106", doi: "10.1109/ITET70052.2026.11650705", award: "Best Presentation Award" },
+    { n: 2, g: "intl", y: 2024, t: "Analyzing Communication Logs in Pair Programming: A Comparison of Human- and LLM-Based Approaches", a: "Jang, W., Hou, R., Gao, H., & Kasneci, E.", v: "21st International Conference on Information Technology Based Higher Education and Training (ITHET)", doi: "10.1109/ITHET61869.2024.10837662" },
+    { n: 3, g: "intl", y: 2024, t: "Exploring Communication Dynamics: Eye-tracking Analysis in Pair Programming of Computer Science Education", a: "Jang, W., Gao, H., Michaeli, T., & Kasneci, E.", v: "Proceedings of the ACM Symposium on Eye Tracking Research and Applications (ETRA), Article 65", doi: "10.1145/3649902.3653942" },
+    { n: 14, g: "review", y: 2026, t: "Task Performance, Short-Term Learning, and Visual Attention in AI-Assisted Programming with GitHub Copilot", a: "Jang, W., Özdel, S., Abdrabou, Y., Gao, H., & Kasneci, E.", v: "Under review at IEEE Transactions on Learning Technologies" },
+    { n: 15, g: "review", y: 2026, t: "From Gaze Analytics to Pedagogical Action: A Systematic Review of Machine Learning–Integrated Eye Tracking in Education with Implications for Computing Education", a: "Jang, W., Abdrabou, Y., Molnar, A., & Kasneci, E.", v: "Under review at ACM Transactions on Computing Education" },
+    { n: 4, g: "ko", y: 2024, t: "Analysis of Factors Influencing University Admission Type Preferences: The Case of A University", a: "Park, Y., Yim, S., Jang, W., Kim, J., & Song, Y.", v: "The Journal of Learner-Centered Curriculum and Instruction, 24(11), 523–542", doi: "10.22251/jlcci.2024.24.11.523" },
+    { n: 5, g: "ko", y: 2023, t: "Analysis of Entry-Level 3D Modeler Job and Development of a Standard Occupational Training Program for Career Technical Education Students", a: "Lee, J. Y., Park, Y., Nam, Y., Jang, W., Kim, J., & Song, Y.", v: "The Journal of Learner-Centered Curriculum and Instruction, 23(24), 337–351", doi: "10.22251/jlcci.2023.23.24.337" },
+    { n: 6, g: "ko", y: 2023, t: "The Structural Relationship between College Students’ Personal Characteristics, Learning Experiences, Learning Satisfaction, and Learning Outcomes", a: "Park, Y., Yim, S., Jang, W., Kim, J., & Song, Y.", v: "The Journal of Learner-Centered Curriculum and Instruction, 23(21), 495–517", doi: "10.22251/jlcci.2023.23.21.495" },
+    { n: 7, g: "ko", y: 2023, t: "Job Analysis and Training Course Development of Web Programmer for Students at Specialized Vocational High Schools", a: "Park, Y., Lee, J. Y., Nam, Y., Jang, W., Kim, J., & Song, Y.", v: "The Journal of Vocational Education Research, 42(4), 73–94" },
+    { n: 8, g: "ko", y: 2023, t: "A Qualitative Study on the Learning Experiences of College Students Who Cross-Applied from Humanities to Natural Sciences: The Case of University A", a: "Park, Y., Yim, S., Jang, W., Kim, J., & Song, Y.", v: "The Journal of Educational Studies, 54(2), 51–78", doi: "10.15854/jes.2023.06.54.2.51" },
+    { n: 9, g: "ko", y: 2023, t: "An Analysis on the Research Trends of Career Capital: Focused on Journals Published in Korea and Abroad", a: "Park, Y., Lee, H., Jang, W., & Kim, J.", v: "Journal of Korea Academia-Industrial Cooperation Society, 24(5), 471–489", doi: "10.5762/KAIS.2023.24.5.471" },
+    { n: 10, g: "ko", y: 2023, t: "The Influences of Leader’s Empowering Leadership on In-Role Behavior and Extra-Role Behavior of Members of the MZ Generation in Public Institutions: The Mediating Effect of Positive Psychological Capital", a: "Jang, W., Lee, J. Y., & Park, Y.", v: "Journal of Corporate Education and Talent Research, 25(1), 141–178", doi: "10.46260/KSLP.25.1.6" },
+    { n: 11, g: "ko", y: 2022, t: "Analyzing Success Factors of Transfer of Training in In-Service Training for Vocational Training Instructors Using Success Case Method", a: "Park, Y., Lee, S., Yim, S., Kim, Jiyoung, Jang, W., Kim, Jisoo, & Song, Y.", v: "Journal of Vocational Education & Training, 25(3), 185–217", doi: "10.36907/krivet.2022.25.3.185" },
+    { n: 12, g: "ko", y: 2022, t: "Development of Quality Management System for In-Service Training for Vocational Training Instructors", a: "Park, Y., Lee, S., Yim, S., Kim, Jiyoung, Jang, W., Song, Y., & Kim, Jisoo.", v: "Journal of Vocational Education & Training, 25(2), 243–277", doi: "10.36907/krivet.2022.25.2.243" },
+    { n: 13, g: "ko", y: 2022, t: "A Study on the Validation of the Korean Version of the Career Crafting Assessment (K-CCA)", a: "Yim, S., Jang, W., Song, Y., & Park, Y.", v: "Journal of Corporate Education and Talent Research, 24(4), 111–146", doi: "10.46260/KSLP.24.4.4" }
+  ];
+
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  function authors(a) { return esc(a).split("Jang, W.").join('<span class="me">Jang, W.</span>'); }
+
+  var list = document.getElementById("pubs");
+  function render(f) {
+    list.innerHTML = pubs.filter(function (p) { return f === "all" || p.g === f; }).map(function (p) {
+      var badge = p.award ? '<span class="badge award">' + esc(p.award) + '</span>'
+        : p.g === "review" ? '<span class="badge review">under review</span>'
+        : p.g === "ko" ? '<span class="badge ko">in Korean</span>' : "";
+      var links = p.doi ? '<div class="links"><a href="https://doi.org/' + esc(p.doi) + '" target="_blank" rel="noopener">doi:' + esc(p.doi) + '</a></div>' : "";
+      return '<li class="pub"><span class="yr">' + p.y + '</span><div><span class="t">' + esc(p.t) + badge + '</span>' +
+        '<span class="au">' + authors(p.a) + '</span><br><span class="venue">' + esc(p.v) + '</span>' + links + '</div></li>';
+    }).join("");
+  }
+  var buttons = document.querySelectorAll(".filters button");
+  buttons.forEach(function (b) {
+    var f = b.getAttribute("data-f");
+    b.querySelector(".count").textContent = pubs.filter(function (p) { return f === "all" || p.g === f; }).length;
+    b.addEventListener("click", function () {
+      buttons.forEach(function (x) { x.setAttribute("aria-pressed", x === b ? "true" : "false"); });
+      render(f);
+    });
+  });
+  render("all");
+
+  // copy email
+  var btn = document.getElementById("copy-email");
+  btn.addEventListener("click", function () {
+    var text = document.getElementById("email").textContent;
+    function done() { btn.textContent = "Copied"; setTimeout(function () { btn.textContent = "Copy"; }, 1600); }
+    function fallback() {
+      var r = document.createRange(); r.selectNodeContents(document.getElementById("email"));
+      var s = window.getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = "Selected";
+    }
+    try { navigator.clipboard.writeText(text).then(done, fallback); } catch (e) { fallback(); }
+  });
+
+  // highlight current section in the rail
+  var links = document.querySelectorAll(".rail nav a");
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) links.forEach(function (l) { l.classList.toggle("on", l.getAttribute("href") === "#" + e.target.id); });
+      });
+    }, { rootMargin: "-30% 0px -60% 0px" });
+    document.querySelectorAll("main section").forEach(function (s) { io.observe(s); });
+  }
+})();
+</script>
+</body>
+</html>
